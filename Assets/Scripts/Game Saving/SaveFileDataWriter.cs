@@ -7,12 +7,12 @@ using System.IO;
 public class SaveFileDataWriter
 {
     public string saveDataDirectoryPath = "";
-    public string saveFilename = "";
+    public string saveFileName = "";
 
     // 존재하는 캐릭터 슬롯에 새로 저장하지 않도록 체크.
     public bool CheckToSeeIfFileExists()
     {
-        if (File.Exists(Path.Combine(saveDataDirectoryPath, saveFilename)))
+        if (File.Exists(Path.Combine(saveDataDirectoryPath, saveFileName)))
         {
             return true;
         }
@@ -25,14 +25,14 @@ public class SaveFileDataWriter
     // 캐릭터 세이브 파일을 지우는데 사용
     public void DeleteSaveFile()
     {
-        File.Delete(Path.Combine(saveDataDirectoryPath, saveFilename));
+        File.Delete(Path.Combine(saveDataDirectoryPath, saveFileName));
     }
 
     // 뉴게임에서 새로운 세이브 파일을 만드는데 씀
     public void CreateCharacterSaveFile(CharacterSaveData characterData)
     {
         // 파일을 저장할 경로를 만듬 (머신에 존재하는 경로).
-        string savePath = Path.Combine(saveDataDirectoryPath,saveFilename);
+        string savePath = Path.Combine(saveDataDirectoryPath,saveFileName);
 
         try
         {
@@ -63,7 +63,7 @@ public class SaveFileDataWriter
     {
         CharacterSaveData characterData = null;
         // 파일을 로드하기 위하여 경로를 만듬(머신에 있는 위치)
-        string loadPath = Path.Combine(saveDataDirectoryPath, saveFilename);
+        string loadPath = Path.Combine(saveDataDirectoryPath, saveFileName);
 
         if (File.Exists(loadPath))
         {

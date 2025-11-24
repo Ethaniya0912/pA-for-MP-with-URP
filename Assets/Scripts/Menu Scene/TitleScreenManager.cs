@@ -16,13 +16,17 @@ public class TitleScreenManager : MonoBehaviour
     [SerializeField] Button mainMenuNewGameButton;
     [SerializeField] Button loadMenuReturnButton;
     [SerializeField] Button mainMenuLoadGameButton;
+    [SerializeField] Button deleteCharacterPopUpConfirmButton;
 
     [Header("Pop Ups")]
     [SerializeField] GameObject noCharacterSlotsPopup;
     [SerializeField] Button noCharacterSlotsOkayButton;
+    [SerializeField] GameObject deleteCharacterSlotPopUp;
 
     [Header("Save Slots")]
     public CharacterSlots currentSelectedSlot = CharacterSlots.No_Slot;
+
+
 
     private void Awake()
     {
@@ -81,6 +85,7 @@ public class TitleScreenManager : MonoBehaviour
         mainMenuNewGameButton.Select();
     }
 
+    // Character Slots
     public void SelectCharacterSlot(CharacterSlots characterSlots)
     {
         currentSelectedSlot = characterSlots;
@@ -90,4 +95,33 @@ public class TitleScreenManager : MonoBehaviour
     {
         currentSelectedSlot = CharacterSlots.No_Slot;
     }
+
+    public void AttemptToDeleteCharacterSlot()
+    {
+        if (currentSelectedSlot != CharacterSlots.No_Slot)
+        {
+            deleteCharacterSlotPopUp.SetActive(true);
+            deleteCharacterPopUpConfirmButton.Select();  
+        }
+    }
+
+    public void DeleteCharacterSlot()
+    {
+        deleteCharacterSlotPopUp.SetActive(false);
+        WorldSaveGameManager.Instance.DeleteGame(currentSelectedSlot);
+
+        // 삭제 후 리프레시하기 위함으로 타이틀스크린로드메뉴를 비활성화/활성화
+        titleScreenLoadMenu.SetActive(false );
+        titleScreenLoadMenu.SetActive(true);
+
+        loadMenuReturnButton.Select();
+    }
+
+    public void CloseDeleteCharacterPopUp()
+    {
+        deleteCharacterSlotPopUp.SetActive(false);
+        loadMenuReturnButton.Select();
+    }
+     
+
 }

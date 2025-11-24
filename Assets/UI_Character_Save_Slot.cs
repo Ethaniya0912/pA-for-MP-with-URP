@@ -27,7 +27,7 @@ public class UI_Character_Save_Slot : MonoBehaviour
         // 세이브 슬롯 01
         if (characterSlot == CharacterSlots.CharacterSlots_01)
         {
-            saveFileWriter.saveFilename = WorldSaveGameManager.Instance.DecideCharacterFileNameBasedOnCharacterSlotBeingUsed(characterSlot);
+            saveFileWriter.saveFileName = WorldSaveGameManager.Instance.DecideCharacterFileNameBasedOnCharacterSlotBeingUsed(characterSlot);
 
             // 파일이 있으면 로직 실행
             // 파일에서 데이터를 가져와 게임오브젝트에 적용
@@ -44,7 +44,7 @@ public class UI_Character_Save_Slot : MonoBehaviour
         // 세이브 슬롯 02
         else if (characterSlot == CharacterSlots.CharacterSlots_02)
         {
-            saveFileWriter.saveFilename = WorldSaveGameManager.Instance.DecideCharacterFileNameBasedOnCharacterSlotBeingUsed(characterSlot);
+            saveFileWriter.saveFileName = WorldSaveGameManager.Instance.DecideCharacterFileNameBasedOnCharacterSlotBeingUsed(characterSlot);
 
             // 파일이 있으면 로직 실행
             // 파일에서 데이터를 가져와 게임오브젝트에 적용
@@ -61,7 +61,7 @@ public class UI_Character_Save_Slot : MonoBehaviour
         // 세이브 슬롯 03
         else if (characterSlot == CharacterSlots.CharacterSlots_03)
         {
-            saveFileWriter.saveFilename = WorldSaveGameManager.Instance.DecideCharacterFileNameBasedOnCharacterSlotBeingUsed(characterSlot);
+            saveFileWriter.saveFileName = WorldSaveGameManager.Instance.DecideCharacterFileNameBasedOnCharacterSlotBeingUsed(characterSlot);
 
             // 파일이 있으면 로직 실행
             // 파일에서 데이터를 가져와 게임오브젝트에 적용
@@ -78,7 +78,7 @@ public class UI_Character_Save_Slot : MonoBehaviour
         // 세이브 슬롯 04
         else if (characterSlot == CharacterSlots.CharacterSlots_04)
         {
-            saveFileWriter.saveFilename = WorldSaveGameManager.Instance.DecideCharacterFileNameBasedOnCharacterSlotBeingUsed(characterSlot);
+            saveFileWriter.saveFileName = WorldSaveGameManager.Instance.DecideCharacterFileNameBasedOnCharacterSlotBeingUsed(characterSlot);
 
             // 파일이 있으면 로직 실행
             // 파일에서 데이터를 가져와 게임오브젝트에 적용
@@ -95,7 +95,7 @@ public class UI_Character_Save_Slot : MonoBehaviour
         // 세이브 슬롯 05
         else if (characterSlot == CharacterSlots.CharacterSlots_05)
         {
-            saveFileWriter.saveFilename = WorldSaveGameManager.Instance.DecideCharacterFileNameBasedOnCharacterSlotBeingUsed(characterSlot);
+            saveFileWriter.saveFileName = WorldSaveGameManager.Instance.DecideCharacterFileNameBasedOnCharacterSlotBeingUsed(characterSlot);
 
             // 파일이 있으면 로직 실행
             // 파일에서 데이터를 가져와 게임오브젝트에 적용

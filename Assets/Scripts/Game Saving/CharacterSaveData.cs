@@ -6,6 +6,9 @@ using UnityEngine;
 // 해당 데이터를 모든 세이브 파일에서 레퍼하려하기 떄문에, 모노비헤이비어가 아닌 Serealizable로.
 public class CharacterSaveData
 {
+    [Header("Scene Index")]
+    public int sceneIndex = 1;
+
     [Header("Character Name")]
     public string characterName = "Character";
 

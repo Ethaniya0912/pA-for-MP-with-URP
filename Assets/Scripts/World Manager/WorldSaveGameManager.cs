@@ -100,7 +100,7 @@ public class WorldSaveGameManager : MonoBehaviour
 
         // 새 파일을 만듬, 어떤 슬롯을 사용하는 지에 따라 파일 이름이 달림
         // Check to see if file exist first before create new file.
-        saveFileDataWriter.saveFilename = DecideCharacterFileNameBasedOnCharacterSlotBeingUsed(CharacterSlots.CharacterSlots_01);
+        saveFileDataWriter.saveFileName = DecideCharacterFileNameBasedOnCharacterSlotBeingUsed(CharacterSlots.CharacterSlots_01);
 
         if(!saveFileDataWriter.CheckToSeeIfFileExists())
         {
@@ -111,7 +111,7 @@ public class WorldSaveGameManager : MonoBehaviour
             return;
         }
 
-        saveFileDataWriter.saveFilename = DecideCharacterFileNameBasedOnCharacterSlotBeingUsed(CharacterSlots.CharacterSlots_02);
+        saveFileDataWriter.saveFileName = DecideCharacterFileNameBasedOnCharacterSlotBeingUsed(CharacterSlots.CharacterSlots_02);
 
         if(!saveFileDataWriter.CheckToSeeIfFileExists())
         {
@@ -135,7 +135,7 @@ public class WorldSaveGameManager : MonoBehaviour
         saveFileDataWriter = new SaveFileDataWriter();
         // 일반적으로 다양한 기계 타입에 작동됨(Application.persistentDataPath)
         saveFileDataWriter.saveDataDirectoryPath = Application.persistentDataPath;
-        saveFileDataWriter.saveFilename = saveFileName;
+        saveFileDataWriter.saveFileName = saveFileName;
         currentCharacterData = saveFileDataWriter.LoadSaveFile();
 
         StartCoroutine(LoadWorldScene());
@@ -148,7 +148,7 @@ public class WorldSaveGameManager : MonoBehaviour
 
         saveFileDataWriter = new SaveFileDataWriter();
         saveFileDataWriter.saveDataDirectoryPath = Application.persistentDataPath;
-        saveFileDataWriter.saveFilename = saveFileName;
+        saveFileDataWriter.saveFileName = saveFileName;
 
         // 플레이어 인포를 넘겨주고, 세이브파일화함
         player.SaveGameDataToCurrentCharacterData(ref currentCharacterData);
@@ -157,29 +157,41 @@ public class WorldSaveGameManager : MonoBehaviour
         saveFileDataWriter.CreateCharacterSaveFile(currentCharacterData);
     }
 
+    public void DeleteGame(CharacterSlots characterSlots)
+    {
+        // 선택한 파일을 삭제, 어떤 슬롯을 사용하는 지에 따라 파일 이름이 갈림.
+
+        saveFileDataWriter = new SaveFileDataWriter();
+        // 일반적으로 다양한 기계 타입에 작동됨(Application.persistentDataPath)
+        saveFileDataWriter.saveDataDirectoryPath = Application.persistentDataPath;
+        saveFileDataWriter.saveFileName = DecideCharacterFileNameBasedOnCharacterSlotBeingUsed(characterSlots);
+        saveFileDataWriter.DeleteSaveFile();
+        //currentCharacterData = saveFileDataWriter.LoadSaveFile();
+    }
+
     // 게임을 시작하면 기계에 있는 모든 캐릭터 프로필을 불러오기
     private void LoadAllCharacterProfiles()
     {
         saveFileDataWriter = new SaveFileDataWriter();
         saveFileDataWriter.saveDataDirectoryPath = Application.persistentDataPath;
 
-        saveFileDataWriter.saveFilename = 
+        saveFileDataWriter.saveFileName = 
             DecideCharacterFileNameBasedOnCharacterSlotBeingUsed(CharacterSlots.CharacterSlots_01);
         characterSlots01 = saveFileDataWriter.LoadSaveFile();
 
-        saveFileDataWriter.saveFilename =
+        saveFileDataWriter.saveFileName =
             DecideCharacterFileNameBasedOnCharacterSlotBeingUsed(CharacterSlots.CharacterSlots_02);
         characterSlots02 = saveFileDataWriter.LoadSaveFile();
 
-        saveFileDataWriter.saveFilename =
+        saveFileDataWriter.saveFileName =
             DecideCharacterFileNameBasedOnCharacterSlotBeingUsed(CharacterSlots.CharacterSlots_03);
         characterSlots03 = saveFileDataWriter.LoadSaveFile();
 
-        saveFileDataWriter.saveFilename =
+        saveFileDataWriter.saveFileName =
             DecideCharacterFileNameBasedOnCharacterSlotBeingUsed(CharacterSlots.CharacterSlots_04);
         characterSlots04 = saveFileDataWriter.LoadSaveFile();
 
-        saveFileDataWriter.saveFilename =
+        saveFileDataWriter.saveFileName =
             DecideCharacterFileNameBasedOnCharacterSlotBeingUsed(CharacterSlots.CharacterSlots_05);
         characterSlots05 = saveFileDataWriter.LoadSaveFile();
     }
@@ -187,7 +199,11 @@ public class WorldSaveGameManager : MonoBehaviour
     // 코루틴 역할을 하는 IEnumerator을 사용.
     public IEnumerator LoadWorldScene()
     {
+        // 씬 하나일 경우 아래 코드
         AsyncOperation loadOperation = SceneManager.LoadSceneAsync(worldSceneIndex);
+
+        // 씬 여럿일 경우 아래코드
+        // AsyncOperation loadOperation = SceneManager.LoadSceneAsync(currentCharacterData.sceneIndex);
 
         player.LoadGameDataFromCurrentCharacterData(ref currentCharacterData);
 
