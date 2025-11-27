@@ -209,10 +209,16 @@ MonoBehaviour:
     m_InternalValue: 0
   endurance:
     m_InternalValue: 10
+  vitality:
+    m_InternalValue: 1
   currentStamina:
     m_InternalValue: 100
   maxStamina:
     m_InternalValue: 100
+  currentHealth:
+    m_InternalValue: 1
+  maxHealth:
+    m_InternalValue: 1
   characterName:
     m_InternalValue:
       utf8LengthInBytes: 9
@@ -455,4 +461,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   effectToTest: {fileID: 11400000, guid: ad2b50a3ba7b24809b9bb4576606032d, type: 2}
-  processEffect: 1
+  processEffect: 0
