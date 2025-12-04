@@ -73,21 +73,25 @@ public class PlayerNetworkManager : CharacterNetworkManager
 
     // 아이템 액션
     [ServerRpc]
-    public void NotifyTheServerOfWeaponActionServerRPC()
+    public void NotifyTheServerOfWeaponActionServerRPC(ulong clientID, int actionID, int weaponID)
     {
         if (IsServer)
         {
-            NotifyTheServerOfWeaponActionClientRpc();
+            NotifyTheServerOfWeaponActionClientRpc(clientID, actionID, weaponID);
         }
     }
     
     [ClientRpc]
-    private void NotifyTheServerOfWeaponActionClientRpc()
+    private void NotifyTheServerOfWeaponActionClientRpc(ulong clientID, int actionID, int weaponID)
     {
-        
+        // 로컬클라이언트가 다시 액션을 실행하지 않도록 조건문.
+        if (clientID != NetworkManager.Singleton.LocalClientId)
+        {
+            PerformWeaponBasedAction(actionID, weaponID);
+        }
     }
 
-    private void PlayWeaponAction()
+    private void PerformWeaponBasedAction(int actionID, int weaponID)
     {
         
     }
