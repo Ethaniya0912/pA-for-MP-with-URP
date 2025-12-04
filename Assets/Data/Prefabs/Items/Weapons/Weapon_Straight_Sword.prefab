@@ -93,6 +93,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5418690757883034657}
+  - component: {fileID: 3047459527746501585}
   m_Layer: 0
   m_Name: Weapon_Straight_Sword
   m_TagString: Untagged
@@ -116,6 +117,19 @@ Transform:
   - {fileID: 4662381701456049153}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3047459527746501585
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 449641753450697265}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 157cd25fff9f283468616a4b280b98f2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  meleeWeaponDamageCollider: {fileID: 0}
 --- !u!1 &6087314007468320053
 GameObject:
   m_ObjectHideFlags: 0
@@ -158,6 +172,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5209558357873806215}
   - component: {fileID: 3222192076963236571}
+  - component: {fileID: 6571776529133500745}
   m_Layer: 10
   m_Name: Damage Collider
   m_TagString: Untagged
@@ -197,7 +212,22 @@ BoxCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
   m_Size: {x: 0.09, y: 0.68, z: 0.03}
   m_Center: {x: -0.000000017856408, y: 0.43, z: 0.000000054809625}
+--- !u!114 &6571776529133500745
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7539386094994731565}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2389687449ccefd41bb53fce803538e9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  physicalDamage: 0
+  elementalDamage: 0
+  characterCausingDamage: {fileID: 0}

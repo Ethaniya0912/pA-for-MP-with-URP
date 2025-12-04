@@ -19,11 +19,12 @@ public class DamageCollider : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         // 콜라이더에 접촉된 other의 캐릭터 컴포넌트를 가져온후 damageTarget 에 복사.
-        CharacterManager damageTarget = other.GetComponent<CharacterManager>();
+        CharacterManager damageTarget = other.GetComponentInParent<CharacterManager>();
 
         if (damageTarget != null)
         {
             contactPoint = other.gameObject.GetComponent<Collider>().ClosestPointOnBounds(transform.position);
+            Debug.Log(other.gameObject);
 
             // 데미지가 팀킬인지 체크
 

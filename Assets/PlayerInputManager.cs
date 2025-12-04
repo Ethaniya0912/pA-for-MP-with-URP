@@ -27,6 +27,7 @@ public class PlayerInputManager : MonoBehaviour
 
     [Header("Player Actioion Input")]
     [SerializeField] bool dodgeInput;
+    [SerializeField] bool RB_Input = false;
 
     private void Awake()
     {
@@ -50,6 +51,10 @@ public class PlayerInputManager : MonoBehaviour
         SceneManager.activeSceneChanged += OnSceneChange;
 
         Instance.enabled = false;
+        if(playerControls != null)
+        {
+            playerControls.Disable();
+        }
     }
 
     // arg0은 올드씬, arg1은 뉴씬
@@ -60,12 +65,22 @@ public class PlayerInputManager : MonoBehaviour
         if (newScene.buildIndex == WorldSaveGameManager.Instance.GetWorldSceneIndex())
         {
             Instance.enabled = true;
+
+            if(playerControls != null)
+            {
+                playerControls.Enable();
+            }   
         }
         // 그렇지 않을 경우 메인메뉴에 존재한다는 뜻이며, 플레이어 컨트롤을 비활성화함.
         // 캐릭터 크리에이션 중에 캐릭터가 움직이지 않게 하기 위함.
         else
         {
             Instance.enabled = false;
+
+            if(playerControls != null)
+            {
+                playerControls.Disable();
+            }   
         }
     }
 
@@ -77,6 +92,7 @@ public class PlayerInputManager : MonoBehaviour
 
             playerControls.PlayerMoveMent.Movement.performed += i => movementInput = i.ReadValue<Vector2>();
             playerControls.PlayerAction.Dodge.performed += i => dodgeInput = true;
+            playerControls.PlayerAction.RB.performed += i => RB_Input = true;
         }
 
         playerControls.Enable();
@@ -114,6 +130,7 @@ public class PlayerInputManager : MonoBehaviour
         HandleMovementInput();
         HandleCameraMovementInput();
         HandleDodgeInput();
+        HandleRBInput();
     }
 
     // 움직임관련
@@ -154,7 +171,6 @@ public class PlayerInputManager : MonoBehaviour
     }
 
     // 액션관련
-
     private void HandleDodgeInput()
     {
         if (dodgeInput == true)
@@ -166,6 +182,25 @@ public class PlayerInputManager : MonoBehaviour
 
             // 닷지를 퍼폼하기.
             player.playerLocomotionManager.AttemptToPerformDodge();
+        }
+    }
+
+    private void HandleRBInput()
+    {
+        if (RB_Input)
+        {
+            RB_Input = false;
+
+            // TD : UI창이 열려있다면, 리턴하고 아무것도 안함.
+
+            player.playerNetworkManager.SetCharacterActionHand(true); // RB_input 들어오면 항상 참.
+
+            // TD : 양손이라면 양손 액션 사용
+
+            player.playerCombatManager.PerformWeaponBaseAction
+            (player.playerInventoryManager.currentRightHandWeapon.oh_RB_Action,
+            player.playerInventoryManager.currentRightHandWeapon
+            );
         }
     }
 }

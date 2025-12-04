@@ -31,6 +31,11 @@ public class CharacterManager : NetworkBehaviour
         characterAnimationManager = GetComponent<CharacterAnimationManager>();
     }
 
+    protected virtual void Start()
+    {
+        IgnoreMyOwnCollider();
+    }
+
     protected virtual void Update()
     {
         // 캐릭터가 내쪽에서 움직일 경우, 네트워크포지션에 내 포지션을 할당
@@ -91,6 +96,31 @@ public class CharacterManager : NetworkBehaviour
     public virtual void ReviveCharacter()
     {
 
+    }
+
+    protected virtual void IgnoreMyOwnCollider()
+    {
+        Collider characterControllerCollider = GetComponent<Collider>();
+        Collider[] damageableCharacterColliders = GetComponentsInChildren<Collider>();
+        List<Collider> ignoreColliders = new List<Collider>();
+
+        // 모든 데미저블캐릭터콜라이더를 리스트에 때려박음
+        foreach (var collider in damageableCharacterColliders)
+        {
+            ignoreColliders.Add(collider);
+        }
+
+        // 메인 캐릭터 컨트롤러도 별도로 리스트에 추가
+        ignoreColliders.Add(characterControllerCollider);
+
+        // 포이치문을 돌려, 리스트 콜라이더 내부에 있는 각 콜라이더 기리 서로 콜리션 무시.
+        foreach (var collider in ignoreColliders)
+        {
+            foreach ( var otherCollider in ignoreColliders)
+            {
+                Physics.IgnoreCollision(collider, otherCollider, true);
+            }
+        }
     }
 
 

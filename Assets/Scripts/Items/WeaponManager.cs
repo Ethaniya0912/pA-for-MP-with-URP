@@ -8,11 +8,12 @@ public class WeaponManager : MonoBehaviour
 
     private void Awake()
     {
-        meleeWeaponDamageCollider = GetComponent<MeleeWeaponDamageCollider>();
+        meleeWeaponDamageCollider = GetComponentInChildren<MeleeWeaponDamageCollider>();
     }
 
-    public void SetWeaponDamage(WeaponItem weapon)
+    public void SetWeaponDamage(CharacterManager characterWieldingWeapon ,WeaponItem weapon)
     {
+        meleeWeaponDamageCollider.characterCausingDamage = characterWieldingWeapon;
         meleeWeaponDamageCollider.physicalDamage = weapon.physicalDamage;
         meleeWeaponDamageCollider.elementalDamage = weapon.elementalDamage;
     }

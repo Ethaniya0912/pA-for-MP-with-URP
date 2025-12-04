@@ -31,5 +31,8 @@ public class WeaponItem : Item
     // 라이트 어택 스태미나 코스트 모디파이어
     // 헤비어택 스태미나 코스트 모디파이어
 
+    [Header("Actions")]
+    public WeaponItemAction oh_RB_Action; // 한손 right bumper 액션.
+
 
 }
