@@ -5,7 +5,7 @@ using UnityEngine;
 public class DamageCollider : MonoBehaviour
 {
     [Header("Collider")]
-    protected Collider damageCollider;
+    [SerializeField] protected Collider damageCollider;
     [Header("Damage")]
     public float physicalDamage = 0;
     public float elementalDamage = 0;
@@ -14,9 +14,14 @@ public class DamageCollider : MonoBehaviour
     protected List<CharacterManager> characterDamaged = new List<CharacterManager>();
 
     [Header("Contact Point")]
-    private Vector3 contactPoint;
+    protected Vector3 contactPoint;
 
-    private void OnTriggerEnter(Collider other)
+    protected virtual void Awake()
+    {
+
+    }
+
+    protected virtual void OnTriggerEnter(Collider other)
     {
         // 콜라이더에 접촉된 other의 캐릭터 컴포넌트를 가져온후 damageTarget 에 복사.
         CharacterManager damageTarget = other.GetComponentInParent<CharacterManager>();

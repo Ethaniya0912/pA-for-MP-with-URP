@@ -29,6 +29,12 @@ public class PlayerCamera : MonoBehaviour
     private float cameraZPosition; // 카메라 콜리션을 위한 밸류
     private float targetCameraZPosition;  // 카메라 콜리션을 위한 밸류
 
+    [Header("Lock On")]
+    [SerializeField] private float lockOnRadius = 20;
+    [SerializeField] float minimumViewableAngle = -50;
+    [SerializeField] float maximumViewableAngle = 50;
+    [SerializeField] float maximumLockOnDistance = 20;
+
     private void Awake()
     {
         // 싱글턴
@@ -129,5 +135,56 @@ public class PlayerCamera : MonoBehaviour
         // 마지막으로 시간값 0.2f를 활용하여 마지막 포지션으로 lerp를 적용해준다.
         cameraObjectPosition.z = Mathf.Lerp(cameraObject.transform.localPosition.z, targetCameraZPosition, 0.2f);
         cameraObject.transform.localPosition = cameraObjectPosition;
+    }
+
+    public void HandleLocatingLockOnTargets()
+    {
+        float shortestDistance = Mathf.Infinity; // 타겟이 얼마나 근처에 있는지 정함..
+        float shortestDistanceOfRightTarget = Mathf.Infinity; // 한 axis 로부터 우측 최단 타겟(-)
+        float shortestDistaanntOfLeftTarget = -Mathf.Infinity; // 한 axis 로부터 좌측 최단 타겟(-)   
+
+        // TD : 레이어 마스크 사용
+        Collider[] colliders = Physics.OverlapSphere(player.transform.position, lockOnRadius);
+
+        for (int i = 0; i < colliders.Length; i++)
+        {
+            CharacterManager lockOnTarget = colliders[i].GetComponent<CharacterManager>();
+
+            if (lockOnTarget != null)
+            {
+                // FOV 내 있는지 체크
+                Vector3 lockOnTargetsDirection = lockOnTarget.transform.position - player.transform.position;
+                float distanceFromTarget = Vector3.Distance(player.transform.position, lockOnTarget.transform.position);
+                float viewableAngle = Vector3.Angle(lockOnTargetsDirection, cameraObject.transform.forward);
+
+                // 타겟이 죽은 상태면 포문 계속 진행.
+                if (lockOnTarget.characterNetworkManager.isDead.Value)
+                    continue; 
+                
+                // 타겟을 자신으로 잡앗을 시, 무시하고 다음 타겟 진행.
+                if (lockOnTarget.transform.root == player.transform.root)
+                    continue;
+
+                // 타겟이 사거리 바깥일 시, 다음 타겟 진행.
+                if (distanceFromTarget > maximumLockOnDistance)
+                    continue;
+
+                if (viewableAngle > minimumViewableAngle && viewableAngle < maximumViewableAngle)
+                {
+                    RaycastHit hit;
+
+                    // TD : 환경 레이어 전용 레이어마스크 추가.
+                    if (Physics.Linecast(player.playerCombatManager.lockOnTransform.position, lockOnTarget.characterCombatManager.lockOnTransform.position, out hit))
+                    {
+                        // 환경레이어에서 무언가 닿았을 시, 타겟에 락온 불가.
+                        continue;
+                    }
+                    else
+                    {
+                        Debug.Log("We Made it");
+                    }
+                }
+            }
+        }
     }
 }

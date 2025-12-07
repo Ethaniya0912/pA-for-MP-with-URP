@@ -18,6 +18,8 @@ public class PlayerInputManager : MonoBehaviour
     public float cameraVerticalInput;
     public float cameraHorizontalInput;
 
+    [Header("Lock On Input")]
+    [SerializeField] bool lockOn_Input;
 
     [Header("Player Movement Input")]
     [SerializeField] Vector2 movementInput;
@@ -25,9 +27,10 @@ public class PlayerInputManager : MonoBehaviour
     public float horizontalInput;
     public float moveAmount;
 
-    [Header("Player Actioion Input")]
+    [Header("Player Action Input")]
     [SerializeField] bool dodgeInput;
     [SerializeField] bool RB_Input = false;
+
 
     private void Awake()
     {
@@ -93,6 +96,9 @@ public class PlayerInputManager : MonoBehaviour
             playerControls.PlayerMoveMent.Movement.performed += i => movementInput = i.ReadValue<Vector2>();
             playerControls.PlayerAction.Dodge.performed += i => dodgeInput = true;
             playerControls.PlayerAction.RB.performed += i => RB_Input = true;
+
+            // 락온
+            playerControls.PlayerAction.LockOn.performed += i => lockOn_Input = true;
         }
 
         playerControls.Enable();
@@ -131,6 +137,43 @@ public class PlayerInputManager : MonoBehaviour
         HandleCameraMovementInput();
         HandleDodgeInput();
         HandleRBInput();
+        HandleLockOnInput();
+    }
+
+    // 락온
+    private void HandleLockOnInput()
+    {
+        // 타겟이 죽었는지 체크
+        if (player.playerNetworkManager.isLockedOn.Value)
+        {
+            // 상대가 파괴되어 null 일 것 대비
+            if (player.playerCombatManager.currentTarget == null)
+                return;
+            
+            // 현재 타겟이 사망? (언락)
+            if (player.playerCombatManager.currentTarget.characterNetworkManager.isDead.Value)
+            {
+                player.playerNetworkManager.isLockedOn.Value = false;
+            }
+
+            // 새로운 타겟을 찾기.
+            
+        }
+
+        if (lockOn_Input && player.playerNetworkManager.isLockedOn.Value)
+        {
+            lockOn_Input = false;
+            // 이미 락온? (언락)
+            return;
+        }
+
+        if (lockOn_Input && !player.playerNetworkManager.isLockedOn.Value)
+        {
+            lockOn_Input = true;
+            // 락온
+
+            // 레인지 무기 사용중이라면 락온 안함.
+        }
     }
 
     // 움직임관련
@@ -197,7 +240,7 @@ public class PlayerInputManager : MonoBehaviour
 
             // TD : 양손이라면 양손 액션 사용
 
-            player.playerCombatManager.PerformWeaponBaseAction
+            player.playerCombatManager.PerformWeaponBasedAction
             (player.playerInventoryManager.currentRightHandWeapon.oh_RB_Action,
             player.playerInventoryManager.currentRightHandWeapon
             );

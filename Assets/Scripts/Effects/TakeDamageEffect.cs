@@ -45,9 +45,12 @@ public class TakeDamageEffect : InstantCharacterEffect
         CalculateDamage(character);
         // 방향별 데미지 위치 체크
         // 데미지 애니메이션 재생
+        PlayDirectionalBasedDamagedAnimation(character);
         // 빌드업 체크(독, 출혈등)
         // 데미지 사운드 이펙트 재생
+        PlayDamageSFX(character);
         // 데미지 vfx 재생(출혈)
+        PlayDamageVFX(character);
 
         // 캐릭터가 ai 일 시, 데미지를 초래한 캐릭터가 존재시 타게팅.
 
@@ -79,6 +82,63 @@ public class TakeDamageEffect : InstantCharacterEffect
         
         Debug.Log("Final Damage Given: " + finalDamageDealt);
         character.characterNetworkManager.currentHealth.Value -= finalDamageDealt;
+    }
+
+    private void PlayDamageVFX(CharacterManager character)
+    {
+        // 불 데미지를 가졌다면 불 파티클 재생
+        // 라이트닝 데미지, 라이트닝 파티클 등등...
+
+        character.characterEffectsManager.PlayBloodSplatterVFX(contactPoint);
+    }
+
+    private void PlayDamageSFX(CharacterManager character)
+    {
+        AudioClip physicalDamageSFX = WorldSoundFXManager.Instance.ChooseRandomSFXFromArray(WorldSoundFXManager.Instance.physicalDamageSFX);
+
+        character.characterSoundFxManager.PlaySoundFX(physicalDamageSFX);
+
+    }
+
+    private void PlayDirectionalBasedDamagedAnimation(CharacterManager character)
+    {
+        if (!character.IsOwner)
+            return;
+        // TD : 포이즈가 부셔졌는지 계싼
+        poiseIsBroken = true;
+
+        // 공격자의 앵글을 계산
+        if (angleHitFrom >= 145 && angleHitFrom <= 180)
+        {
+            // 정면 애니메이션 플레이
+            damageAnimation = character.characterAnimationManager.GetRandomAnimationFromList(character.characterAnimationManager.forward_Medium_Damage);
+        }
+        else if (angleHitFrom <= -145 && angleHitFrom >= -180)
+        {
+            // 정면 애니메이션 플레이
+            damageAnimation = character.characterAnimationManager.GetRandomAnimationFromList(character.characterAnimationManager.forward_Medium_Damage);
+        }
+        else if (angleHitFrom >= -45 && angleHitFrom <= 45)
+        {
+            // 후면 애니메이션 플레이
+            damageAnimation = character.characterAnimationManager.GetRandomAnimationFromList(character.characterAnimationManager.backward_Medium_Damage);
+        }
+        else if (angleHitFrom >= -144 && angleHitFrom <= -45)
+        {
+            // 좌측 애니메이션 플레이
+            damageAnimation = character.characterAnimationManager.GetRandomAnimationFromList(character.characterAnimationManager.left_Medium_Damage);
+        }
+        else if (angleHitFrom >= 45 && angleHitFrom <= 144)
+        {
+            // 우측 애니메이션 플레이
+            damageAnimation = character.characterAnimationManager.GetRandomAnimationFromList(character.characterAnimationManager.right_Medium_Damage);
+        }
+
+        if (poiseIsBroken)
+        {
+            character.characterAnimationManager.lastAnimationPlayed = damageAnimation;
+            character.characterAnimationManager.PlayTargetAnimation(damageAnimation, true);
+        }
     }
 
 }

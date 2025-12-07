@@ -25,3 +25,8 @@ public enum WeaponModelSlot
     // 좌측 엉덩이,
     // 등, 
 }
+
+public enum AttackType
+{
+    LightAttack01,
+}

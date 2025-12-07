@@ -20,13 +20,16 @@ public class WeaponItem : Item
     public float poiseDamage = 10;
     // 공격시 포이즈 보너스
 
+    [Header("Attack Modifiers")]
     // 웨폰 모디파이어
     // 라이트 어택 모디파이어
+    public float light_Attack_01_Modifier = 1.1f;
     // 헤비 어택 모디파이어
     // 크리티컬 데미지 모디파이어
 
-    [Header("Stamina Costs")]
+    [Header("Stamina Costs Modifiers")]
     public int baseStaminaCost = 20;
+    public float lightAttackStaminaCostMultiplier = 0.9f;
     // 달리면서 공격 스태미나 코스트 모디파이어
     // 라이트 어택 스태미나 코스트 모디파이어
     // 헤비어택 스태미나 코스트 모디파이어

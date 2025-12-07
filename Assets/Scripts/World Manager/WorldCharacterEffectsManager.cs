@@ -7,6 +7,9 @@ public class WorldCharacterEffectsManager : MonoBehaviour
 {
     public static WorldCharacterEffectsManager Instance{get; private set;}
 
+    [Header("VFX")]
+    public GameObject bloodSplatterVFX;
+
     [Header("Damage")]
     public TakeDamageEffect takeDamageEffect;
 
@@ -22,6 +25,7 @@ public class WorldCharacterEffectsManager : MonoBehaviour
             Destroy(gameObject);
         }
 
+        DontDestroyOnLoad(gameObject);
         GenerateEffectIDs();
     }
 

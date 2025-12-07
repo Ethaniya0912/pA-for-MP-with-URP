@@ -17,12 +17,14 @@ MonoBehaviour:
   itemDescription: 'a Straight Sword
 
 '
-  itemID: 0
+  itemID: 2
   weaponModel: {fileID: 449641753450697265, guid: e0c514489434548419a042ee047aa824,
     type: 3}
   muscleReq: 0
-  physicalDamage: 0
+  physicalDamage: 20
   elementalDamage: 0
   poiseDamage: 10
+  light_Attack_01_Modifier: 1.1
   baseStaminaCost: 20
-  oh_RB_Action: {fileID: 11400000, guid: bd11e2d01457d4fbba2a3d0a373d91a9, type: 2}
+  lightAttackStaminaCostMultiplier: 0.9
+  oh_RB_Action: {fileID: 11400000, guid: 1c4b2605ec42c5c49b01b63346d69b7f, type: 2}

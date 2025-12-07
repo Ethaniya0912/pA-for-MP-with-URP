@@ -1,5 +1,6 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
 public class PlayerCombatManager : CharacterCombatManager
@@ -8,6 +9,7 @@ public class PlayerCombatManager : CharacterCombatManager
 
     public WeaponItem currentWeaponBeingUsed;
 
+
     protected override void Awake()
     {
         base.Awake();
@@ -15,15 +17,42 @@ public class PlayerCombatManager : CharacterCombatManager
         player = GetComponent<PlayerManager>();
     }
 
-    public void PerformWeaponBaseAction(WeaponItemAction weaponAction, WeaponItem weaponPerformingAction)
+    public void PerformWeaponBasedAction(WeaponItemAction weaponAction, WeaponItem weaponPerformingAction)
     {
+        if (!player.IsOwner)
+            return;
+
         if (player.IsOwner)
         {
             // 액션 수행하기.
             weaponAction.AttemptToPerformAction(player, weaponPerformingAction);
 
             // 수행한 액션을 서버에 알리고, 그 후 서버가 다른 클라이언트에게 수행한 액션을 보여줌
-            player.playerNetworkManager.NotifyTheServerOfWeaponActionServerRpc();
+            player.playerNetworkManager.NotifyTheServerOfWeaponActionServerRpc
+                (NetworkManager.Singleton.LocalClientId, weaponAction.actionID,
+                weaponPerformingAction.itemID);
         }
+    }
+
+    public virtual  void DrainStaminaBasedOnAttack()
+    {
+        if (!player.IsOwner)
+            return;
+
+        if (currentWeaponBeingUsed == null) 
+            return;
+
+        float staminaDeducted = 0;
+
+        switch (currentAttackType)
+        {
+            case AttackType.LightAttack01:
+                staminaDeducted = currentWeaponBeingUsed.baseStaminaCost * currentWeaponBeingUsed.lightAttackStaminaCostMultiplier;
+                break;
+            default:
+                break;
+        }
+
+        player.playerNetworkManager.currentStamina.Value -= Mathf.RoundToInt(staminaDeducted);
     }
 }

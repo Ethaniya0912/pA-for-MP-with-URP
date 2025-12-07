@@ -170,5 +170,44 @@ public class PlayerEquipmentManager : CharacterEquipmentManager
         leftHandSlot.LoadWeapon(leftHandWeaponModel);
         leftWeaponManager = leftHandWeaponModel.GetComponent<WeaponManager>();
         leftWeaponManager.SetWeaponDamage(player, player.playerInventoryManager.currentLeftHandWeapon);
+        Debug.Log($"Player Equipment Manager, IsOwner : ,{ player.IsOwner}");
+    }
+
+    public void OpenDamageCollider()
+    {
+        // 우측 무기 데미지 콜라이더 오픈
+        if (player.playerNetworkManager.isUsingRightHand.Value)
+        {
+            rightWeaponManager.meleeWeaponDamageCollider.EnableDamageCollider();
+            Debug.Log("Collider opened");
+        }
+
+        // 좌측 무기 데미지 콜라이더 오픈
+        else if (player.playerNetworkManager.isUsingLeftHand.Value)
+        {
+            leftWeaponManager.meleeWeaponDamageCollider.EnableDamageCollider();
+
+        }
+
+        // 베는 소리 sfx.
+    }
+
+    public void CloseDamageCollider()
+    {
+        // 우측 무기 데미지 콜라이더 닫기
+        if (player.playerNetworkManager.isUsingRightHand.Value)
+        {
+            rightWeaponManager.meleeWeaponDamageCollider.DisableDamageCollider();
+            Debug.Log("Collider closed");
+        }
+
+        // 좌측 무기 데미지 콜라이더 닫기
+        else if (player.playerNetworkManager.isUsingLeftHand.Value)
+        {
+            leftWeaponManager.meleeWeaponDamageCollider.DisableDamageCollider();
+
+        }
+
+        // 베는 소리 sfx.
     }
 }

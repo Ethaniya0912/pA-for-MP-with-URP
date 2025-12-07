@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Unity.Netcode;
 
 public class PlayerManager : CharacterManager
 {
@@ -62,6 +63,7 @@ public class PlayerManager : CharacterManager
     public override void OnNetworkSpawn()
     {
         base.OnNetworkSpawn();
+        NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnectedCallback;
 
         // 클라이언트에 의해 소유된 플레이어 오브젝트일 시
         if (IsOwner)
@@ -94,6 +96,32 @@ public class PlayerManager : CharacterManager
         playerNetworkManager.currentLeftHandWeaponID.OnValueChanged += playerNetworkManager.OnCurrentLeftHandWeaponIDChange;
         playerNetworkManager.currentWeaponBeingUsed.OnValueChanged += playerNetworkManager.OnCurrentWeaponBeingUsedIDChange;
 
+        // 접속시 우리가 캐릭터의 오너지만 서버가 아닐 경우 캐릭터 데이터를 새로 인스턴스한 캐릭터로 리로드
+        if (IsOwner && !IsServer)
+        {
+            LoadGameDataFromCurrentCharacterData(ref WorldSaveGameManager.Instance.currentCharacterData);
+        }
+
+    }
+
+    private void OnClientConnectedCallback(ulong clientID)
+    {
+        // 유저가 접속하면 이벤트에 붙일 것, OnNetworkSpawn에.
+        // 현 게임세션에 활동하는 플레이어 리스트를 키핑함.
+        WorldGameSessionManager.Instance.AddPlayerToActivePlayerList(this);
+
+        // 만약 우리가 서버라면, 호스트이며, 다른 유저를 싱크할 필요가 없음(나중에 접속할일x)
+        // 도중에 참가한 유저일때만 싱크할 필요성이 있음.
+        if(!IsServer && IsOwner)
+        {
+            foreach(var player in WorldGameSessionManager.Instance.players)
+            {
+                if(player != this)
+                {
+                    player.LoadOtherPlayerCharacterWhenJoiningServer();
+                }
+            }
+        }
     }
 
     public override IEnumerator ProcessDeathEvent(bool manuallySelectDeathAnimation = false)
@@ -160,6 +188,13 @@ public class PlayerManager : CharacterManager
             playerStatsManager.CalculateHealthBasedOnVitalityLevel(playerNetworkManager.vitality.Value); 
         playerNetworkManager.currentStamina.Value =
             playerStatsManager.CalculateStaminaBasedOnEnduranceLevel(playerNetworkManager.endurance.Value);
+    }
+
+    private void LoadOtherPlayerCharacterWhenJoiningServer()
+    {
+        // 무기 싱크(나중에 아머나 캐릭터커마라면 수염등이 있음)
+        playerNetworkManager.OnCurrentRightHandWeaponIDChange(0, playerNetworkManager.currentRightHandWeaponID.Value);
+        playerNetworkManager.OnCurrentLeftHandWeaponIDChange(0, playerNetworkManager.currentLeftHandWeaponID.Value);
     }
 
     // 나중에 디버깅은 지움.

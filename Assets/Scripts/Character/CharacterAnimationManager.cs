@@ -11,9 +11,68 @@ public class CharacterAnimationManager : MonoBehaviour
     float vertical;
     float horizontal;
 
+    [Header("Damage Animations")]
+    public string lastAnimationPlayed; 
+
+    [SerializeField] string hit_Forward_Medium_01 = "hit_Forward_Medium_01";
+    [SerializeField] string hit_Forward_Medium_02 = "hit_Forward_Medium_02";
+    [SerializeField] string hit_Backward_Medium_01 = "hit_Backward_Medium_01";
+    [SerializeField] string hit_Backward_Medium_02 = "hit_Backward_Medium_02";
+    [SerializeField] string hit_Left_Medium_01 = "hit_Left_Medium_01";
+    [SerializeField] string hit_Left_Medium_02 = "hit_Left_Medium_02";
+    [SerializeField] string hit_Right_Medium_01 = "hit_Right_Medium_01";
+    [SerializeField] string hit_Right_Medium_02 = "hit_Right_Medium_02";
+
+    public List<string> forward_Medium_Damage = new List<string>();
+    public List<string> backward_Medium_Damage = new List<string>();
+    public List<string> left_Medium_Damage = new List<string>();
+    public List<string> right_Medium_Damage = new List<string>();
+
     protected virtual void Awake()
     {
         character = GetComponent<CharacterManager>();
+    }
+
+    protected virtual void Start()
+    {
+        forward_Medium_Damage.Add(hit_Forward_Medium_01);
+        forward_Medium_Damage.Add(hit_Forward_Medium_02);
+
+        backward_Medium_Damage.Add(hit_Backward_Medium_01);
+        backward_Medium_Damage.Add(hit_Backward_Medium_02);
+
+        left_Medium_Damage.Add(hit_Left_Medium_01);
+        left_Medium_Damage.Add(hit_Left_Medium_02);
+
+        right_Medium_Damage.Add(hit_Right_Medium_01);
+        right_Medium_Damage.Add(hit_Right_Medium_02);
+    }
+
+    public string GetRandomAnimationFromList(List<string> animationList)
+    {
+        List<string> finalList = new List<string>();
+
+        // 전달 받은 애니메이션 리스트를 finalList에 넣어 분리, 안전하게 기존 리스트 보존.
+        foreach (var item in animationList)
+        {
+            finalList.Add(item);
+        }
+
+        // 리스트에서 플레이된 애니메이션을 체크, 중복실행방지.
+        finalList.Remove(lastAnimationPlayed);
+
+        // 리스트에 null 이 있으면 제거.
+        for (int i = finalList.Count - 1; i > -1; i--)
+        {
+            if (finalList[i] == null)
+            {
+                finalList.RemoveAt(i);
+            }
+        }
+
+        int randomValue = Random.Range(0, finalList.Count);
+        
+        return finalList[randomValue];
     }
 
     public void UpdateAnimatorMovementParameters(float horizontalValue, float verticalValue) 
@@ -29,6 +88,7 @@ public class CharacterAnimationManager : MonoBehaviour
         bool canRotate = false, 
         bool canMove = false)
     {
+        Debug.Log("Playing Animation: " + targetAnimation);
         character.animator.applyRootMotion = applyRootMotion;
         // 0.2초 간격으로 애니메이션을 블랜딩함.
         character.animator.CrossFade(targetAnimation, 0.2f);
@@ -43,6 +103,33 @@ public class CharacterAnimationManager : MonoBehaviour
         // 서버/호스트에게 우리가 애니메이션을 플레이하고 있다고 말하고
         // 세션에 있는 모든 사람이 애니메이션 재생.
         character.characterNetworkManager.NotifyTheServerOfActionAnimationServerRpc(
+            NetworkManager.Singleton.LocalClientId,
+            targetAnimation,
+            applyRootMotion);
+    }
+
+    public virtual void PlayTargetAttackActionAnimation(AttackType attackType,
+    string targetAnimation,
+    bool isPerformingAction,
+    bool applyRootMotion = true,
+    bool canRotate = false,
+    bool canMove = false)
+    {
+        // 마지막 공격을 트랙함(콤보를 위해)
+        // 현재 공격 타입을 트랙함(라이트,헤비,ect)-공격이페리될수있거나,스태미나가 
+        // 얼마나 드레인되는지 알 수 있어야하며, 데미지콜라이더등 알아야함.
+        // 애니메이션을 현재 무기 애니메이션으로 업데이트
+        // 네트워크에 "isAttacking" 플래그를 액티브하라 말함 (카운터 데미지등을 위해)
+        character.characterCombatManager.currentAttackType = attackType;
+        character.animator.applyRootMotion = applyRootMotion;
+        character.animator.CrossFade(targetAnimation, 0.2f);
+        character.isPerformingAction = isPerformingAction;
+        character.canRotate = canRotate;
+        character.canMove = canMove;
+
+        // 서버/호스트에게 우리가 애니메이션을 플레이하고 있다고 말하고
+        // 세션에 있는 모든 사람이 애니메이션 재생.
+        character.characterNetworkManager.NotifyTheServerOfAttackActionAnimationServerRpc(
             NetworkManager.Singleton.LocalClientId,
             targetAnimation,
             applyRootMotion);

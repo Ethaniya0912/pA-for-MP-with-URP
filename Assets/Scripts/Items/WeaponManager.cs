@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class WeaponManager : MonoBehaviour
 {
-    [SerializeField] MeleeWeaponDamageCollider meleeWeaponDamageCollider;
+    public MeleeWeaponDamageCollider meleeWeaponDamageCollider;
 
     private void Awake()
     {
@@ -14,7 +14,10 @@ public class WeaponManager : MonoBehaviour
     public void SetWeaponDamage(CharacterManager characterWieldingWeapon ,WeaponItem weapon)
     {
         meleeWeaponDamageCollider.characterCausingDamage = characterWieldingWeapon;
+        Debug.Log($"weaponManager , is Owner : {meleeWeaponDamageCollider.characterCausingDamage.IsOwner}");
         meleeWeaponDamageCollider.physicalDamage = weapon.physicalDamage;
         meleeWeaponDamageCollider.elementalDamage = weapon.elementalDamage;
+
+        meleeWeaponDamageCollider.light_Attack_01_Modifier = weapon.light_Attack_01_Modifier;
     }
 }

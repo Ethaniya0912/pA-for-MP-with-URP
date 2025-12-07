@@ -73,7 +73,7 @@ public class PlayerNetworkManager : CharacterNetworkManager
 
     // 아이템 액션
     [ServerRpc]
-    public void NotifyTheServerOfWeaponActionServerRPC(ulong clientID, int actionID, int weaponID)
+    public void NotifyTheServerOfWeaponActionServerRpc(ulong clientID, int actionID, int weaponID)
     {
         if (IsServer)
         {
@@ -93,6 +93,17 @@ public class PlayerNetworkManager : CharacterNetworkManager
 
     private void PerformWeaponBasedAction(int actionID, int weaponID)
     {
-        
+        // weaponAction에 월드액션매니저에 actionID를 넣어 검색한 아이디를 반환, 복사.
+        WeaponItemAction weaponAction = WorldActionManager.Instance.GetWeaponItemActioByID(actionID);
+
+        if (weaponAction != null)
+        {
+            weaponAction.AttemptToPerformAction(player, WorldItemDatabase.Instance.GetWeaponByID(weaponID));
+        }
+        else
+        {
+            // 액션 값이 없음, 에러(이런 일이 잇으면 안됨)
+            Debug.LogError("Action Is null, Cannot perform");
+        }
     }
 }
